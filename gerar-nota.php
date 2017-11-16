@@ -16,6 +16,7 @@ $dompdf = new DOMPDF();
 /* Carrega seu HTML */
 $dompdf->load_html('<fieldset>
  <h1><center>Nota Fiscal </center></h1>
+  <h1><center>Nome da empresa </center></h1>
  <center> Nº do agendamento: ............................................................................. '.$cod_agendamento.'
  <br> 
  <br>
