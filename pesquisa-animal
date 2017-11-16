@@ -1,0 +1,129 @@
+<style>
+table{
+  width:100%;
+  border:1px solid #000;
+  border-collapse: collapse;
+}
+/*Texto alinhado à esquerda*/
+th,td{
+  text-align:center;
+}
+/*Primeira e última colunas com texto centralizado*/
+th:nth-child(1),th:nth-child(2), th:nth-child(3), th:nth-child(4), th:nth-child(5), th:nth-child(6),
+td:nth-child(1),td:nth-child(2), td:nth-child(3), td:nth-child(4), td:nth-child(5), td:nth-child(6){
+  text-align:center;
+}
+/*Tamanho da primeira coluna 10%*/
+th:nth-child(1){
+  width: 10%;
+}
+/*Tamanho da última coluna 20%*/
+th:nth-child(4){
+  width: 20%;
+}
+</style>
+<?php
+        include("Bootstrap.php");
+         require("manter_login.php");
+          ini_set('display_errors', 0 ); error_reporting(0);
+?>
+<body>
+	<br>
+			<br>
+			<br>
+			<br>
+           <center> <h1>Animal</h1>
+            <hr/>
+            <center><h1>Pesquisar animal:</h1></center>
+                <form action="pesquisa-animal.php" method="post">
+                   
+                    <h1> <input type="text" name="buscar" id="buscar" placeholder="Digite o nome aqui" autocomplete="off"/></h1> <br>
+                    <h1><button>Pesquisar</button></h1> 
+                    <!-- <input type="button" name="btnPesquisar" value="Pesquisar"/> -->
+                </form>
+            <hr/>
+
+            <h1>Resultados da pesquisa:</h1>
+            <hr/>
+         <link rel="stylesheet" type="text/css" href="CSSHomePET.css">
+		<a href="HomePET.html" target="_self"><i><h1> Voltar </h1></i></a> </font></center><br>
+   <?php
+    
+    include ("conexao.php");
+$buscar= $_POST['buscar'];// palavra que o usuario digitou
+$sql = "SELECT * FROM animal WHERE nome LIKE'%".$buscar."%'";//faz a busca com as palavras enviadas
+$result = $conexao -> query($sql);
+//$row = mysqli_num_rows($sql);
+if ($result -> num_rows > 0) {
+echo "<table width = '90%' border='1' cellspacing='10' cellpadding='4'align ='center'>
+        <thead>
+          <tr>
+            <th width = '150 px'>Nome do animal </th>
+            <th>Idade</th>
+			<th>Sexo </th>
+            <th>Espécie</th>
+            <th>Nome do Dono</th>
+            <th>Porte</th>
+            <th>Raça</th>
+            <th>Imagem</th>";
+            if($_SESSION['Cargo']=="Administrador"){
+               
+          echo  "<th>Editar</th>";
+
+          echo  "<th>Apagar</th>";
+
+          }else if($_SESSION['Cargo']=="Funcionario" ){
+          echo "</tr>
+          </thead>
+          <tbody>
+          <tr>";
+        }
+  while($buscar = $rows = $result -> fetch_assoc()) {
+    echo "<tr align ='center'><td size = '100 px'> " . $rows["Nome"] . "</td>" .
+       "<td>" . $rows["Idade"] . "</td>" .
+	   "<td>" . $rows["Sexo"] . "</td>" .
+       "<td>" . $rows["Outraespecie"] . "</td>" .
+       "<td>" . $rows["Nome_Dono"] . "</td>" .
+       "<td>" . $rows["Porte"] . "</td>" .
+       "<td>" . $rows["Raca"] . "</td>" .
+       "<td>" . "<img src = '" . $rows["arquivo"] . "'/height='150' width='150'></td>";
+        // Cria um formulário para enviar os dados para a página de edição 
+                // Colocamos os dados dentro input hidden
+       if($_SESSION['Cargo']=="Administrador"){
+                echo "<td>";
+                echo "<a href='edita-animal.php' <span class='glyphicon glyphicon-pencil'></span></a>";
+                echo "<input name='Nome' type='hidden' value='" .$rows['Nome']. "'>";
+                echo "<input name='Idade' type='hidden' value='" .$rows['Idade']. "'>";
+                echo "<input name='Sexo' type='hidden' value='" .$rows['Sexo']. "'>";
+                echo "<input name='Outraespecie' type='hidden' value='" .$rows['Outraespecie']. "'>";
+                echo "<input name='Nome_Dono' type='hidden' value='" .$rows['Nome_Dono']. "'>";
+                echo "<input name='Porte' type='hidden' value='" .$rows['Porte']. "'>";
+                echo "<input name='Raca' type='hidden' value='" .$rows['Raca']. "'>";
+                echo "<input name='arquivo' type='hidden' value='" .$rows['arquivo']. "'>";   
+                //echo "<button>Editar</button>";
+                echo "</form>";
+                echo "</td>";
+                // Cria um formulário para remover os dados 
+                // Colocamos o id dos dados a serem removidos dentro do input hidden
+                echo "<td>";
+                echo "<a href='remove-animal.php' <span class='glyphicon glyphicon-trash'></span></a>";
+                echo "<input name='Nome' type='hidden' value='" .$rows['Nome']. "'>";
+                //echo "<button>Remover</button>";
+                echo "</form>";
+                echo "</td>";
+
+                echo "</tr>";
+                }else { 
+              }
+//echo  "<strong>Nome</strong>" .@$Nome;
+//echo  "<strong>Idade</strong>" .@$Idade;
+//echo  "<strong>Outraespecie</strong>" .@$Outraespecie;
+  }
+} else 
+{
+  echo "Nenhum animal encontrado";
+
+}
+$conexao -> close();
+?>
+</body>    
